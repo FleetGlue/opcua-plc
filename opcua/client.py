@@ -4,7 +4,7 @@ import logging
 import time
 from opcua import Client
 
-from devices.base import COUNT_NODE, STATE_NODE, TIME_NODE
+from devices.base import COUNT_REGISTER, STATE_REGISTER, TIME_REGISTER
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -88,13 +88,13 @@ class OPCUAClient:
 
     def press_button(self, device_name):
         try:
-            state_node = self.get_node(device_name, STATE_NODE)
+            state_node = self.get_node(device_name, STATE_REGISTER)
             state_node.set_value(True)
 
-            time_node = self.get_node(device_name, TIME_NODE)
+            time_node = self.get_node(device_name, TIME_REGISTER)
             time_node.set_value(str(time.time()))
 
-            count_node = self.get_node(device_name, COUNT_NODE)
+            count_node = self.get_node(device_name, COUNT_REGISTER)
             current_count = count_node.get_value()
             count_node.set_value(current_count + 1)
 
@@ -104,10 +104,10 @@ class OPCUAClient:
 
     def release_button(self, device_name):
         try:
-            state_node = self.get_node(device_name, STATE_NODE)
+            state_node = self.get_node(device_name, STATE_REGISTER)
             state_node.set_value(False)
 
-            time_node = self.get_node(device_name, TIME_NODE)
+            time_node = self.get_node(device_name, TIME_REGISTER)
             time_node.set_value(str(time.time()))
 
             logger.info(f"Button {device_name} released!")
@@ -123,17 +123,17 @@ class OPCUAClient:
 
     def toggle_switch(self, device_name):
         try:
-            state_node = self.get_node(device_name, STATE_NODE)
+            state_node = self.get_node(device_name, STATE_REGISTER)
             current_state = state_node.get_value()
             logger.info(f"Switch {device_name} current state: {current_state}")
 
             new_state = not current_state
             state_node.set_value(new_state)
 
-            time_node = self.get_node(device_name, TIME_NODE)
+            time_node = self.get_node(device_name, TIME_REGISTER)
             time_node.set_value(str(time.time()))
 
-            count_node = self.get_node(device_name, COUNT_NODE)
+            count_node = self.get_node(device_name, COUNT_REGISTER)
             current_count = count_node.get_value()
             count_node.set_value(current_count + 1)
 
@@ -145,7 +145,7 @@ class OPCUAClient:
 
     def get_count_node(self, device_name):
         try:
-            count = self.get_node_value(device_name, COUNT_NODE)
+            count = self.get_node_value(device_name, COUNT_REGISTER)
             return count
         except Exception as e:
             logger.error(f"Error getting button press count: {e}")
@@ -153,7 +153,7 @@ class OPCUAClient:
 
     def get_last_change_timestamp(self, device_name):
         try:
-            timestamp = self.get_node_value(device_name, TIME_NODE)
+            timestamp = self.get_node_value(device_name, TIME_REGISTER)
             return timestamp
         except Exception as e:
             logger.error(f"Error getting switch timestamp: {e}")

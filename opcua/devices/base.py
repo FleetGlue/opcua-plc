@@ -7,11 +7,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logging.getLogger("opcua").setLevel(logging.WARNING)
 
-COUNT_NODE = "Count"
-STATE_NODE = "State"
-TYPE_NODE = "Type"
-VIRTUALIZED_NODE = "Virtual"
-TIME_NODE = "LastStateChange"
+COUNT_REGISTER = "Count"
+STATE_REGISTER = "State"
+TYPE_REGISTER = "Type"
+VIRTUALIZED_REGISTER = "Virtual"
+TIME_REGISTER = "LastStateChange"
 
 
 class BaseDevice:

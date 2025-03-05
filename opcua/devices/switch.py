@@ -1,6 +1,14 @@
 import time
 
-from .base import BaseDevice, logger, COUNT_NODE, STATE_NODE, TIME_NODE, TYPE_NODE, VIRTUALIZED_NODE
+from .base import (
+    BaseDevice,
+    logger,
+    COUNT_REGISTER,
+    STATE_REGISTER,
+    TIME_REGISTER,
+    TYPE_REGISTER,
+    VIRTUALIZED_REGISTER,
+)
 
 
 class VirtualSwitch(BaseDevice):
@@ -12,19 +20,19 @@ class VirtualSwitch(BaseDevice):
         self.switch_count = 0
 
     def _setup_nodes(self, namespace_idx):
-        """Set up OPC UA nodes (registers) for the virtual switch"""
-        self.switch_node = self.device_node.add_variable(namespace_idx, STATE_NODE, False)
+        """Set up OPC UA nodes (aka registers in PLC lingo) for the virtual switch"""
+        self.switch_node = self.device_node.add_variable(namespace_idx, STATE_REGISTER, False)
         self.switch_node.set_writable()
 
-        self.timestamp_node = self.device_node.add_variable(namespace_idx, TIME_NODE, "")
+        self.timestamp_node = self.device_node.add_variable(namespace_idx, TIME_REGISTER, "")
         self.timestamp_node.set_writable()
 
-        self.switch_count_node = self.device_node.add_variable(namespace_idx, COUNT_NODE, 0)
+        self.switch_count_node = self.device_node.add_variable(namespace_idx, COUNT_REGISTER, 0)
         self.switch_count_node.set_writable()
 
         # metadata
-        self.device_node.add_variable(namespace_idx, TYPE_NODE, "Switch")
-        self.device_node.add_variable(namespace_idx, VIRTUALIZED_NODE, True)
+        self.device_node.add_variable(namespace_idx, TYPE_REGISTER, "Switch")
+        self.device_node.add_variable(namespace_idx, VIRTUALIZED_REGISTER, True)
 
     def toggle(self):
         """Toggle a switch device"""
