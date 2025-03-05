@@ -11,9 +11,12 @@ from devices.button import VirtualButton
 from devices.switch import VirtualSwitch
 
 
-class OPCUAServer:    
-    def __init__(self, endpoint="opc.tcp://0.0.0.0:4840/freeopcua/server/", 
-                 namespace="http://example.org/fleetglue"):
+class OPCUAServer:
+    def __init__(
+        self,
+        endpoint="opc.tcp://0.0.0.0:4840/freeopcua/server/",
+        namespace="http://example.org/fleetglue",
+    ):
         self.server = None
         self.endpoint = endpoint
         self.namespace = namespace
@@ -25,7 +28,7 @@ class OPCUAServer:
         logger.debug("Configuring OPC UA server")
         self.server = Server()
         self.server.set_endpoint(self.endpoint)
-        
+
         # Register namespace
         # Namespaces in OPC UA are used to organize different functionalities
         # e.g. Namespace X: Contains data for Production Line X
@@ -33,12 +36,14 @@ class OPCUAServer:
 
         # Set up server attributes
         server_node = self.server.get_server_node()
-        server_node.set_attribute(ua.AttributeIds.Description, 
-                                  ua.DataValue(ua.Variant("FleetGlue OPC UA Server", ua.VariantType.String)))
-        
+        server_node.set_attribute(
+            ua.AttributeIds.Description,
+            ua.DataValue(ua.Variant("FleetGlue OPC UA Server", ua.VariantType.String)),
+        )
+
         logger.info(f"OPCUA server configured with endpoint: {self.endpoint}")
         return self.namespace_idx
-    
+
     def add_device(self, device):
         logger.debug(f"Adding device: {device.name}")
         if self.server is None:
@@ -47,7 +52,7 @@ class OPCUAServer:
         self.devices.append(device)
         device.initialize(self.server, self.namespace_idx)
         logger.info(f"Added device: {device.name}")
-        
+
     def start(self):
         logger.debug(f"Starting OPC UA Server at {self.endpoint}")
         if self.server is None:
@@ -90,24 +95,26 @@ class OPCUAServer:
 
             logger.info("Server stopped")
 
+
 def main():
     server = OPCUAServer(
         endpoint="opc.tcp://0.0.0.0:4840/freeopcua/server/",
-        namespace="http://example.org/fleetglue"
+        namespace="http://example.org/fleetglue",
     )
 
     switch = VirtualSwitch(name="VirtualSwitch", update_interval=2)
     server.add_device(switch)
-    
+
     button = VirtualButton(name="Button1", pin=17)
     server.add_device(button)
-    
+
     try:
         server.start()
     except KeyboardInterrupt:
         logger.info("Keyboard interrupt received")
     finally:
         server.stop()
+
 
 if __name__ == "__main__":
     main()

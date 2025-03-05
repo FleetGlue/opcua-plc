@@ -1,4 +1,3 @@
-import logging
 import time
 
 from .base import BaseDevice, logger, COUNT_NODE, STATE_NODE, TIME_NODE, TYPE_NODE, VIRTUALIZED_NODE
@@ -49,6 +48,6 @@ class VirtualButton(BaseDevice):
 
     def get_press_count(self):
         return self.press_count
-    
+
     def get_last_change_timestamp(self):
         return self.timestamp_node.get_value()

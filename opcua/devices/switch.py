@@ -1,7 +1,7 @@
-import logging
 import time
 
 from .base import BaseDevice, logger, COUNT_NODE, STATE_NODE, TIME_NODE, TYPE_NODE, VIRTUALIZED_NODE
+
 
 class VirtualSwitch(BaseDevice):
     def __init__(self, name="VirtualSwitch", update_interval=2):
@@ -42,9 +42,9 @@ class VirtualSwitch(BaseDevice):
         except Exception as e:
             logger.error(f"Error toggling switch: {e}")
             return None
-        
+
     def get_switch_count(self):
         return self.switch_count
-    
+
     def get_last_change_timestamp(self):
         return self.timestamp_node.get_value()
