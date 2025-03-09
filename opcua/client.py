@@ -36,6 +36,15 @@ class OPCUAClient:
             self.client.disconnect()
             logger.info("Disconnected from OPC UA server")
 
+    def get_server_url(self):
+        return self.client.server_url.geturl()
+
+    def get_namespaces(self):
+        return self.client.get_namespace_array()
+
+    def get_node_from_path(self, path):
+        return self.client.get_node(path)
+
     def get_devices(self):
         """List all devices on the server"""
         try:
@@ -71,7 +80,9 @@ class OPCUAClient:
             for var in variables:
                 name = (var.get_browse_name()).Name
                 value = var.get_value()
+                node_path = var.nodeid.to_string()
                 logger.info(f"  {name}: {value}")
+                logger.info(f"  Node path: {node_path}")
 
             return variables
         except Exception as e:
@@ -168,13 +179,17 @@ def interactive_menu(client):
         while True:
             print("\n--- OPC UA Client Menu ---")
             print("1. List all devices")
-            print("2. Get device information")
+            print("2. Get device information + node paths")
             print("3. Toggle a switch")
             print("4. Press and Release Button")
             print("5. Press Button")
             print("6. Release Button")
             print("7. Get device count")
             print("8. Get most recent device press time")
+            print("9. Get the server URL")
+            print("11. Get existing namespaces")
+            print("12. Get node from node path")
+            print("13. Get and set node from path")
             print("0. Exit")
 
             choice = input("Enter choice (0-7): ")
@@ -211,6 +226,36 @@ def interactive_menu(client):
                 device_name = input("Enter button device name (default: Button1): ") or "Button1"
                 timestamp = client.get_last_change_timestamp(device_name)
                 print(f"Last button press was at timestamp: {timestamp}")
+            elif choice == "9":
+                url = client.get_server_url()
+                print(f"Server URL: {url}")
+            elif choice == "11":
+                namespaces = client.get_namespaces()
+                print(f"Available namespaces: {namespaces}")
+            elif choice == "12":
+                node_path = input("Enter node_path (default: ns=2;i=2): ") or "ns=2;i=2"
+                try:
+                    node = client.get_node_from_path(node_path)
+                    value = node.get_value()
+                    print(f"Node: {node_path} :: Value: {value}")
+                except Exception as e:
+                    logger.error(f"Error getting node value: {e}")
+            elif choice == "13":
+                node_path = input("Enter node_path (default: ns=2;i=2): ") or "ns=2;i=2"
+                try:
+                    node = client.get_node_from_path(node_path)
+                    value = node.get_value()
+                    print(f"Node: {node_path} :: Value: {value}")
+                except Exception as e:
+                    logger.error(f"Error getting node value: {e}")
+
+                value = input("Enter value (default: True): ") or "True"
+                try:
+                    node.set_value(value)
+                    value = node.get_value()
+                    print(f"Node: {node_path} :: Value: {value}")
+                except Exception as e:
+                    logger.error(f"Error getting node value: {e}")
             else:
                 print("Invalid choice. Please try again.")
 
